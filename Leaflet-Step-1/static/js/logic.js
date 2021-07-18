@@ -32,16 +32,19 @@ var myMap = L.map("map", {
   
   // Store API query variables
   var baseURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+  var plates="PB2002_plates.json";
   //var date = "$where=created_date between'2016-01-01T00:00:00' and '2017-01-01T00:00:00'";
   //var complaint = "&complaint_type=Rodent";
   //var limit = "&$limit=10000";
-  
+  d3.json(plates).then(function(response) {
+        console.log(response);
+  });
   // Assemble API query URL
   //var url = baseURL + date + complaint + limit;
   
   // Grab the data with d3
   d3.json(baseURL).then(function(response) {
-    console.log(response);
+  
     // Create a new marker cluster group
 
     var earthQuakeInfo=[];
@@ -63,7 +66,7 @@ var myMap = L.map("map", {
     
 
     }
-    console.log(earthQuakeInfo);
+
     // Loop through the cities array and create one marker for each city object
     for (var i = 0; i < earthQuakeInfo.length; i++) {
     
@@ -91,6 +94,7 @@ legend.onAdd = function (map) {
         labels = [];
 
     // loop through our density intervals and generate a label with a colored square for each interval
+    div.innerHTML="<h4>Depth</h4>"
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' + depthColor(grades[i] + 1) + '"></i> ' +
