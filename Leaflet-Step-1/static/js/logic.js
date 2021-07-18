@@ -27,9 +27,8 @@ var myMap = L.map("map", {
   d3.json(baseURL).then(function(response) {
     console.log(response);
     // Create a new marker cluster group
-    var markers;
-    markers = new L.markerClusterGroup();
-  
+
+    var earthQuakeInfo=[];
     // Loop through data
     for (var i = 0; i < response.features.length; i++) {
   
@@ -40,13 +39,39 @@ var myMap = L.map("map", {
       if (location) {
   
         // Add a new marker to the cluster group and bind a pop-up
-        markers.addLayer(L.marker([location.coordinates[1], location.coordinates[0]])
-          .bindPopup('hi'));//response[i].descriptor));
-      }
+        earthQuakeInfo.push({'location':[location.coordinates[1], location.coordinates[0]]});
+      };
+
   
     }
+    console.log(earthQuakeInfo);
+    // Loop through the cities array and create one marker for each city object
+for (var i = 0; i < earthQuakeInfo.length; i++) {
+    console.log(earthQuakeInfo[i].location);
+    L.circleMarker(earthQuakeInfo[i].location, {
+      fillOpacity: 0.75,
+      color: "white",
+      fillColor: "purple",
+      // Setting our circle's radius equal to the output of our markerSize function
+      // This will make our marker's size proportionate to its population
+      radius: 10
+    }).addTo(myMap);//.bindPopup("<h1>" + cities[i].name + "</h1> <hr> <h3>Population: " + cities[i].population + "</h3>").addTo(myMap);
+}
+})
+/*
+    // Set up the legend
+    var legend = L.control({ position: "bottomright" });
+    legend.onAdd = function() {
+      var div = L.DomUtil.create("div", "info legend");
+      var limits = geojson.options.limits;
+      var colors = geojson.options.colors;
+      var labels = [];
   
-    // Add our marker cluster layer to the map
-    myMap.addLayer(markers)
+      // Add min & max
+      var legendInfo = "<h1>Median Income</h1>" +
+        "<div class=\"labels\">" +
+          "<div class=\"min\">" + limits[0] + "</div>" +
+          "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+        "</div>";
   
-  });
+      div.innerHTML = legendInfo;*/
