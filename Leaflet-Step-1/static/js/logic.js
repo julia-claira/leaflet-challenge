@@ -1,4 +1,18 @@
 // Creating map object
+
+//functions
+function depthColor(value){
+
+    if (value<10)
+    else if (value>=10 && value <30)
+    else if (value>=30 && value <50)
+    else if (value>=50 && value <70)
+    else if (value>=70 && value <90)
+    else 
+
+
+
+}
 var myMap = L.map("map", {
     center: [40.7, -95.95],
     zoom: 4
@@ -44,7 +58,8 @@ var myMap = L.map("map", {
             'depth':location.coordinates[2],'size':size});
       };
 
-  
+    
+
     }
     console.log(earthQuakeInfo);
     // Loop through the cities array and create one marker for each city object
