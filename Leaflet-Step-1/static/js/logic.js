@@ -16,7 +16,7 @@ function depthColor(value){
 
 // Creating map object
 var myMap = L.map("map", {
-    center: [40.7, -95.95],
+    center: [35.7, -95.95],
     zoom: 4
   });
   
@@ -74,7 +74,7 @@ var myMap = L.map("map", {
       weight: 1,
       // Setting our circle's radius equal to the output of our markerSize function
       // This will make our marker's size proportionate to its population
-      radius: 2*(1.4*earthQuakeInfo[i].size),
+      radius: 2*(1.7*earthQuakeInfo[i].size),
     }).addTo(myMap);//.bindPopup("<h1>" + cities[i].name + "</h1> <hr> <h3>Population: " + cities[i].population + "</h3>").addTo(myMap);
 }
 
