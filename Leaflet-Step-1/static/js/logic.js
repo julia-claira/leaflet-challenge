@@ -1,7 +1,7 @@
 // Creating map object
 var myMap = L.map("map", {
-    center: [60.7, -73.95],
-    zoom: 1
+    center: [40.7, -95.95],
+    zoom: 4
   });
   
   // Adding tile layer to the map
@@ -34,27 +34,30 @@ var myMap = L.map("map", {
   
       // Set the data location property to a variable
       var location = response.features[i].geometry;
+      var size = response.features[i].properties.mag;
   
       // Check for location property
       if (location) {
   
         // Add a new marker to the cluster group and bind a pop-up
-        earthQuakeInfo.push({'location':[location.coordinates[1], location.coordinates[0]]});
+        earthQuakeInfo.push({'location':[location.coordinates[1], location.coordinates[0]],
+            'depth':location.coordinates[2],'size':size});
       };
 
   
     }
     console.log(earthQuakeInfo);
     // Loop through the cities array and create one marker for each city object
-for (var i = 0; i < earthQuakeInfo.length; i++) {
-    console.log(earthQuakeInfo[i].location);
+    for (var i = 0; i < earthQuakeInfo.length; i++) {
+    
     L.circleMarker(earthQuakeInfo[i].location, {
       fillOpacity: 0.75,
-      color: "white",
+      color: "black",
       fillColor: "purple",
+      weight: 1,
       // Setting our circle's radius equal to the output of our markerSize function
       // This will make our marker's size proportionate to its population
-      radius: 10
+      radius: 2*(1.4*earthQuakeInfo[i].size),
     }).addTo(myMap);//.bindPopup("<h1>" + cities[i].name + "</h1> <hr> <h3>Population: " + cities[i].population + "</h3>").addTo(myMap);
 }
 })
