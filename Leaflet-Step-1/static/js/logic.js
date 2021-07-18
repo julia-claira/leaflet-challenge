@@ -82,22 +82,22 @@ var myMap = L.map("map", {
 
 
 /*Legend specific*/
-var legend = L.control({ position: "bottomright" });
+var legend = L.control({position: 'bottomright'});
 
-legend.onAdd = function(map) {
-  var div = L.DomUtil.create("div", "legend");
-  div.innerHTML += "<h4>Depth</h4>";
-  div.innerHTML += '<i style="background: #c3fe0f"></i><span>-10 to 10</span><br>';
-  div.innerHTML += '<i style="background: #fefe0f"></i><span>10 to 30</span><br>';
-  div.innerHTML += '<i style="background: #fec30f"></i><span>30 to 50</span><br>';
-  div.innerHTML += '<i style="background: #fe870f"></i><span>50 to 70l</span><br>';
-  div.innerHTML += '<i style="background: #fe4b0f"></i><span>70 to 90</span><br>';
-  div.innerHTML += '<i style="background: #ff0f0f"></i><span>90+</span><br>';
-  div.innerHTML += '<i class="icon" style="background-image: url(https://d30y9cdsu7xlg0.cloudfront.net/png/194515-200.png);background-repeat: no-repeat;"></i><span></span><br>';
-  
-  
+legend.onAdd = function (map) {
 
-  return div;
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [-10, 10, 30, 50, 70, 90],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + depthColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
 };
 
 legend.addTo(myMap);
