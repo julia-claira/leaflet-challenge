@@ -47,6 +47,6 @@ var myMap = L.map("map", {
     }
   
     // Add our marker cluster layer to the map
-    myMap.addLayer(markers);
+    myMap.addLayer(markers)
   
   });
