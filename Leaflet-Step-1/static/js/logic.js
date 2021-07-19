@@ -14,7 +14,7 @@ function depthColor(value){
 // Creating map object
 var myMap = L.map("map", {
     center: [35.7, -95.95],
-    zoom: 4,
+    zoom: 3,
     });
   
 // Adding tile layer to the map
@@ -69,11 +69,9 @@ d3.json(baseURL).then(function(response) {
     }
 
     var circleGroup = L.layerGroup(); //create group for earthquake circle markers
-    //console.log(location);
+
     // Loop through the earthquakes array and create one marker for each city object
-    console.log(earthQuakeInfo[0].location);
     for (var i = 0; i < earthQuakeInfo.length; i++) {
-    
         L.circleMarker(earthQuakeInfo[i].location, {
             fillOpacity: 0.75,
             color: "black",
@@ -84,86 +82,63 @@ d3.json(baseURL).then(function(response) {
          }).bindPopup("<h2>" + earthQuakeInfo[i].location + "</h2> <hr>" +"<h3>Magnitude: " + 
             earthQuakeInfo[i].size + "</h3>" +"<h3>Depth: " + 
             earthQuakeInfo[i].depth + "</h3>").addTo(circleGroup);
-            //console.log(earthQuakeInfo[i].location);
     };
-    //console.log(earthQuakeInfo);
-    // Grab the tectonic data with d3
-    d3.json(platesURL).then(function(responseB) {
-        
-    // Create array to hold earthquake info
-    var tectonicInfo=[];
-    var tempArray=[];
-    var tectonicGroup = L.layerGroup();//create group for tectonic plates
-    
-    //for (var i = 0; i < responseB.features[i].length; i++) {
-        var locations = responseB.features[0].geometry;
 
-        locations.coordinates.forEach(location =>{
-            if (location) {
-                location.forEach(coord =>{
-                   //location.coordinates[0].forEach(row=> {
-                  tectonicInfo.push([coord[1],coord[0]]);
-                });
-            };  
+    // Grab the tectonic data with d3 and plot it
+    d3.json(platesURL).then(function(responseB) {
+        var tectonicGroup = L.geoJson(responseB,{
+           /* style:{
+            color: "red",
+            weight: "4",
+            opacity: 1,
+            fillOpacity: 0}*/
         });
 
-    //};
-    //console.log(tectonicInfo);
-    // Loop through the tectonic plate array and create polygons
-    //for (var i = 0; i < tectonicInfo.length; i++) {
-        var latlng=[tectonicInfo];
-        /*console.log(latlng);
-        L.polyline(latlng, {
-            color: "red",
-         }).addTo(tectonicGroup);
-         //console.log(tectonicInfo[i].location);*/
-    //};
-    console.log(latlng)
-    L.polyline(latlng).addTo(tectonicGroup);
-
-
-    //console.log(tectonicGroup);
-   // console.log(circleGroup);
-
-    var baseLayers = {
-        "Satellite": sat,
-        "Streets": street,
-        "Grayscale": grayscale
-    };
     
-    var overlays = {
-        "Tectonic Plates": tectonicGroup,
-        "Earthquakes": circleGroup
-    };
+        //creat overlays and base layers
+        var baseLayers = {
+            "Satellite": sat,
+            "Streets": street,
+            "Grayscale": grayscale
+        };
+        
+        var overlays = {
+            "Tectonic Plates": tectonicGroup,
+            "Earthquakes": circleGroup
+  
+        };
 
+        L.control.layers(baseLayers,overlays).addTo(myMap);
 
-    //console.log('hit');
-    L.control.layers(baseLayers,overlays).addTo(myMap);
+        /*myMap.on("overlayadd", function (event) {
+            tectonicGroup.bringToBack();
+            baseLayers.bringToBack();
+          });*/
 
-}); 
+    }); 
 
 });
 
 
-    //Legend
-    var legend = L.control({position: 'bottomright'});
+//Legend
+var legend = L.control({position: 'bottomright'});
 
-    legend.onAdd = function (map) {
+legend.onAdd = function (map) {
 
-        var div = L.DomUtil.create('div', 'info legend'),
-            depths = [-10, 10, 30, 50, 70, 90],
-            labels = [];
+    var div = L.DomUtil.create('div', 'info legend'),
+        depths = [-10, 10, 30, 50, 70, 90],
+        labels = [];
 
-        // loop through our density intervals and generate a label with a colored square for each interval
-        div.innerHTML="<h4>Depth</h4>"
-        for (var i = 0; i < depths.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + depthColor(depths[i] + 1) + '"></i> ' +
-                depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
-        }
+    // loop through our density intervals and generate a label with a colored square for each interval
+    div.innerHTML="<h4>Depth</h4>"
+    for (var i = 0; i < depths.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + depthColor(depths[i] + 1) + '"></i> ' +
+            depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
+    }
 
-        return div;
-    };
+    return div;
+};
 
-    legend.addTo(myMap);
+legend.addTo(myMap);
 
