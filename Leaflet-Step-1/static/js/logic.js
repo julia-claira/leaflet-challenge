@@ -14,10 +14,11 @@ function depthColor(value){
 }
 
 
+
 // Creating map object
 var myMap = L.map("map", {
     center: [35.7, -95.95],
-    zoom: 4
+    zoom: 4,
   });
   
   // Adding tile layer to the map
@@ -27,8 +28,6 @@ var myMap = L.map("map", {
     maxZoom: 18,
     zoomOffset: -1,
     id: "mapbox/light-v10",
-    //id: "mapbox/outdoors",
-    //id: "mapbox/streets-v11",
     accessToken: API_KEY
   }).addTo(myMap);
   
@@ -86,6 +85,17 @@ var myMap = L.map("map", {
 }
 
 /*Setup*/
+
+  
+  // Create a control for our layers, add our overlay layers to it
+  L.control.layers(null, overlays).addTo(myMap);
+  
+  // Create a legend to display information about our map
+  var info = L.control({
+    position: "bottomleft"
+  });
+
+  
 
 
 /*Legend specific*/
