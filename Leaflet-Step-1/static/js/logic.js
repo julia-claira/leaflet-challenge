@@ -49,10 +49,10 @@ var street=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?
 var baseURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 var plates="PB2002_plates.json";
-//call for tectonic plates if I do the optional part
-/*d3.json(plates).then(function(response) {
+//call for tectonic plates
+d3.json(plates).then(function(response) {
     console.log(response);
-});*/
+
   
 // Grab the data with d3
 d3.json(baseURL).then(function(response) {
@@ -71,6 +71,8 @@ d3.json(baseURL).then(function(response) {
         };
     }
 
+    var circleGroup = L.layerGroup();
+
     // Loop through the earthquakes array and create one marker for each city object
     for (var i = 0; i < earthQuakeInfo.length; i++) {
     
@@ -83,8 +85,23 @@ d3.json(baseURL).then(function(response) {
             radius: 2*(1.7*earthQuakeInfo[i].size),
          }).bindPopup("<h2>" + earthQuakeInfo[i].location + "</h2> <hr>" +"<h3>Magnitude: " + 
             earthQuakeInfo[i].size + "</h3>" +"<h3>Depth: " + 
-            earthQuakeInfo[i].depth + "</h3>").addTo(myMap);
+            earthQuakeInfo[i].depth + "</h3>").addTo(circleGroup);
     };
+
+    var baseLayers = {
+        "Satellite": sat,
+        "Streets": street,
+        "Grayscale": grayscale
+    };
+    
+    var overlays = {
+        //"Tectonic Plates": marker,
+        "Earthquakes": circleGroup
+    };
+    
+    L.control.layers(baseLayers,overlays).addTo(myMap);
+
+    var circleGroup = L.markerClusterGroup();
 
     //Legend
     var legend = L.control({position: 'bottomright'});
@@ -108,17 +125,6 @@ d3.json(baseURL).then(function(response) {
 
     legend.addTo(myMap);
 
-    var baseLayers = {
-        "Satellite": sat,
-        "Streets": street,
-        "Grayscale": grayscale
-    };
-    
-    /*var overlays = {
-        "Marker": marker,
-        "Roads": roadsLayer
-    };*/
-    
-    L.control.layers(baseLayers).addTo(myMap);
-
 }); 
+
+});
