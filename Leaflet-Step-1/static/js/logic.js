@@ -18,12 +18,30 @@ var myMap = L.map("map", {
     });
   
 // Adding tile layer to the map
-L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+var grayscale=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
     id: "mapbox/light-v10",
+    accessToken: API_KEY
+    }).addTo(myMap);
+
+var sat=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/satellite-v9",
+    accessToken: API_KEY
+    }).addTo(myMap);
+
+var street=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/streets-v10",
     accessToken: API_KEY
     }).addTo(myMap);
   
@@ -56,7 +74,7 @@ d3.json(baseURL).then(function(response) {
     // Loop through the earthquakes array and create one marker for each city object
     for (var i = 0; i < earthQuakeInfo.length; i++) {
     
-        L.circleMarker(earthQuakeInfo[i].location, {
+        var me= L.circleMarker(earthQuakeInfo[i].location, {
             fillOpacity: 0.75,
             color: "black",
             fillColor: depthColor(earthQuakeInfo[i].depth),//calls the color function for depth
@@ -89,5 +107,18 @@ d3.json(baseURL).then(function(response) {
     };
 
     legend.addTo(myMap);
+
+    var baseLayers = {
+        "Satellite": sat,
+        "Streets": street,
+        "Grayscale": grayscale
+    };
+    
+    /*var overlays = {
+        "Marker": marker,
+        "Roads": roadsLayer
+    };*/
+    
+    L.control.layers(baseLayers).addTo(myMap);
 
 }); 
