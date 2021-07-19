@@ -78,7 +78,9 @@ var myMap = L.map("map", {
       // Setting our circle's radius equal to the output of our markerSize function
       // This will make our marker's size proportionate to its population
       radius: 2*(1.7*earthQuakeInfo[i].size),
-    }).addTo(myMap);//.bindPopup("<h1>" + cities[i].name + "</h1> <hr> <h3>Population: " + cities[i].population + "</h3>").addTo(myMap);
+    }).bindPopup("<h2>" + earthQuakeInfo[i].location + "</h2> <hr>" +"<h3>Magnitude: " + 
+        earthQuakeInfo[i].size + "</h3>" +"<h3>Depth: " + 
+        earthQuakeInfo[i].depth + "</h3>").addTo(myMap);
 }
 
 /*Setup*/
