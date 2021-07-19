@@ -48,16 +48,13 @@ var street=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?
 // Store API query variables
 var baseURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
-var plates="PB2002_plates.json";
-//call for tectonic plates
-d3.json(plates).then(function(response) {
-    console.log(response);
+var platesURL="PB2002_plates.json";
 
-  
-// Grab the data with d3
+
+// Grab the earthquake data with d3
 d3.json(baseURL).then(function(response) {
   
-    // Create a new marker cluster group
+    // Create array to hold earthquake info
     var earthQuakeInfo=[];
     
     for (var i = 0; i < response.features.length; i++) {
@@ -71,12 +68,13 @@ d3.json(baseURL).then(function(response) {
         };
     }
 
-    var circleGroup = L.layerGroup();
-
+    var circleGroup = L.layerGroup(); //create group for earthquake circle markers
+    //console.log(location);
     // Loop through the earthquakes array and create one marker for each city object
+    console.log(earthQuakeInfo[0].location);
     for (var i = 0; i < earthQuakeInfo.length; i++) {
     
-        var me= L.circleMarker(earthQuakeInfo[i].location, {
+        L.circleMarker(earthQuakeInfo[i].location, {
             fillOpacity: 0.75,
             color: "black",
             fillColor: depthColor(earthQuakeInfo[i].depth),//calls the color function for depth
@@ -86,7 +84,46 @@ d3.json(baseURL).then(function(response) {
          }).bindPopup("<h2>" + earthQuakeInfo[i].location + "</h2> <hr>" +"<h3>Magnitude: " + 
             earthQuakeInfo[i].size + "</h3>" +"<h3>Depth: " + 
             earthQuakeInfo[i].depth + "</h3>").addTo(circleGroup);
+            //console.log(earthQuakeInfo[i].location);
     };
+    //console.log(earthQuakeInfo);
+    // Grab the tectonic data with d3
+    d3.json(platesURL).then(function(responseB) {
+        
+    // Create array to hold earthquake info
+    var tectonicInfo=[];
+    var tempArray=[];
+    var tectonicGroup = L.layerGroup();//create group for tectonic plates
+    
+    //for (var i = 0; i < responseB.features[i].length; i++) {
+        var locations = responseB.features[0].geometry;
+
+        locations.coordinates.forEach(location =>{
+            if (location) {
+                location.forEach(coord =>{
+                   //location.coordinates[0].forEach(row=> {
+                  tectonicInfo.push([coord[1],coord[0]]);
+                });
+            };  
+        });
+
+    //};
+    //console.log(tectonicInfo);
+    // Loop through the tectonic plate array and create polygons
+    //for (var i = 0; i < tectonicInfo.length; i++) {
+        var latlng=[tectonicInfo];
+        /*console.log(latlng);
+        L.polyline(latlng, {
+            color: "red",
+         }).addTo(tectonicGroup);
+         //console.log(tectonicInfo[i].location);*/
+    //};
+    console.log(latlng)
+    L.polyline(latlng).addTo(tectonicGroup);
+
+
+    //console.log(tectonicGroup);
+   // console.log(circleGroup);
 
     var baseLayers = {
         "Satellite": sat,
@@ -95,13 +132,18 @@ d3.json(baseURL).then(function(response) {
     };
     
     var overlays = {
-        //"Tectonic Plates": marker,
+        "Tectonic Plates": tectonicGroup,
         "Earthquakes": circleGroup
     };
-    
+
+
+    //console.log('hit');
     L.control.layers(baseLayers,overlays).addTo(myMap);
 
-    var circleGroup = L.markerClusterGroup();
+}); 
+
+});
+
 
     //Legend
     var legend = L.control({position: 'bottomright'});
@@ -125,6 +167,3 @@ d3.json(baseURL).then(function(response) {
 
     legend.addTo(myMap);
 
-}); 
-
-});
