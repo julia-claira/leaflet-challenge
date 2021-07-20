@@ -53,8 +53,7 @@ var street=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?
   
 // Store API query variables
 var baseURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-
-var platesURL="PB2002_plates.json";
+var platesURL="data/PB2002_plates.json";
 
 
 // Grab the earthquake data with d3
@@ -93,6 +92,7 @@ d3.json(baseURL).then(function(response) {
 
     // Grab the tectonic data with d3 and plot it
     d3.json(platesURL).then(function(responseB) {
+        
         var tectonicLines = {
             "fillColor": "orange",
             "weight": 3,
