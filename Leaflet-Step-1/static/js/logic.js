@@ -16,6 +16,12 @@ var myMap = L.map("map", {
     center: [35.7, -95.95],
     zoom: 3,
     });
+
+    //create pane to keep earthquake circles on top
+    myMap.createPane('eq_circles');
+    myMap.getPane('eq_circles').style.pointerEvents = 'none';
+    myMap.getPane('eq_circles').style.zIndex = 650;
+
   
 // Adding tile layer to the map
 var grayscale=L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -77,6 +83,7 @@ d3.json(baseURL).then(function(response) {
             color: "black",
             fillColor: depthColor(earthQuakeInfo[i].depth),//calls the color function for depth
             weight: 1,
+            pane: "eq_circles",//pane to keep these alway on top
             // This will make our marker's size proportionate to magnitude
             radius: 2*(1.7*earthQuakeInfo[i].size),
          }).bindPopup("<h2>" + earthQuakeInfo[i].location + "</h2> <hr>" +"<h3>Magnitude: " + 
@@ -86,13 +93,16 @@ d3.json(baseURL).then(function(response) {
 
     // Grab the tectonic data with d3 and plot it
     d3.json(platesURL).then(function(responseB) {
-        var tectonicGroup = L.geoJson(responseB,{
-           /* style:{
-            color: "red",
-            weight: "4",
-            opacity: 1,
-            fillOpacity: 0}*/
-        });
+        var tectonicLines = {
+            "fillColor": "orange",
+            "weight": 3,
+            "color": "orange",
+            "fillOpacity": 0.01
+          }
+        var tectonicGroup=L.layerGroup()
+        
+        L.geoJson(responseB,{style: tectonicLines}
+            ).addTo(tectonicGroup)
 
     
         //creat overlays and base layers
@@ -108,12 +118,11 @@ d3.json(baseURL).then(function(response) {
   
         };
 
-        L.control.layers(baseLayers,overlays).addTo(myMap);
-
-        /*myMap.on("overlayadd", function (event) {
-            tectonicGroup.bringToBack();
-            baseLayers.bringToBack();
-          });*/
+        tectonicGroup.addTo(myMap);
+        circleGroup.addTo(myMap);
+        
+        L.control.layers(baseLayers,overlays,{collapsed:false}).addTo(myMap);
+        
 
     }); 
 
